@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Game.Api;
+using Game.Api.Common;
 
 namespace DiscordBot.Api.GameCommands
 {
@@ -35,7 +36,7 @@ namespace DiscordBot.Api.GameCommands
             GameManager.LaunchBackgroundLoop();
         }
 
-        public Task PlayGame(ulong userId, string commandName, Func<string, Task> sendMessagePrivate, Func<string, Task> sendMessagePublic)
+        public Task PlayGame(ulong userId, string commandName, Func<FullMessage, bool, Task> sendMessagePrivate, Func<FullMessage, bool, Task> sendMessagePublic)
         {
             GameManager.SetupMessage(userId, sendMessagePrivate, sendMessagePublic);
             GameManager.Play(userId, commandName);

@@ -1,10 +1,12 @@
-﻿namespace Game.Api
+﻿using Game.Api.Common;
+
+namespace Game.Api
 {
     internal sealed class Message
     {
-        private readonly Dictionary<ulong, Func<string, Task>> _sendMessagePrivate = new();
-        private Func<string, Task> _sendMessagePublic;
-        private Message(ulong userId, Func<string, Task> sendMessagePrivate, Func<string, Task> sendMessagePublic)
+        private readonly Dictionary<ulong, Func<FullMessage, bool, Task>> _sendMessagePrivate = new();
+        private Func<FullMessage, bool, Task> _sendMessagePublic;
+        private Message(ulong userId, Func<FullMessage, bool, Task> sendMessagePrivate, Func<FullMessage, bool, Task> sendMessagePublic)
         {
             _sendMessagePrivate.Add(userId, sendMessagePrivate);
             _sendMessagePublic = sendMessagePublic;
@@ -12,7 +14,7 @@
 
         private static Message? _instance;
         public static Message GetInstance() => _instance ??= new Message(0, null, null);
-        public static Message Setup(ulong userId, Func<string, Task> sendMessagePrivate, Func<string, Task> sendMessagePublic)
+        public static Message Setup(ulong userId, Func<FullMessage, bool, Task> sendMessagePrivate, Func<FullMessage, bool, Task> sendMessagePublic)
         {
             if (_instance is null)
             {
@@ -26,15 +28,23 @@
             return GetInstance();
         }
 
-        public static void Private(ulong userId, string text)
+        public static void SendPrivateMessage(ulong userId, string text)
         {
-           GetInstance()._sendMessagePrivate[userId](text);
-           // GetInstance()._sendMessagePublic(text);
+           GetInstance()._sendMessagePrivate[userId](new FullMessage(text), true);
         }
 
-        public static void Public(string text)
+        public static void SendPublicMessage(string text)
         {
-            GetInstance()._sendMessagePublic(text);
+            GetInstance()._sendMessagePublic(new FullMessage(text), true);
+        }
+        public static void SendPrivateEmbedMessage(ulong userId, FullMessage msg)
+        {
+            GetInstance()._sendMessagePrivate[userId](msg, false);
+        }
+
+        public static void SendPublicEmbedMessage(ulong userId, FullMessage msg)
+        {
+            GetInstance()._sendMessagePrivate[userId](msg, false);
         }
     }
 }

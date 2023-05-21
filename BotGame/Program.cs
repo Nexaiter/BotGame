@@ -54,10 +54,8 @@ namespace BartucBot.Api
                 })
                 .ConfigureServices((_, services) =>
                 {
-                    // services.AddDbContext<BartucBotDbContext>();
                     services.AddHostedService<DiscordClientMiddleware>();
                     services.AddSingleton<GameHostedJob>();
-                   // services.AddHostedService(provider => provider!.GetService<GameHostedJob>());
                 })
                 .ConfigureContainer<ContainerBuilder>(container =>
                 {

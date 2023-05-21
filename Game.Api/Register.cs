@@ -14,26 +14,26 @@ namespace Game.Api
         {
             if(!command.Contains("register "))
             {
-                Message.Private(userId, "register using register playername command");
+                Message.SendPrivateMessage(userId, "register using register playername command");
                 return;
             }
             string name = command.Replace("register ", "");
 
             if(!NicknameValidator(name))
             {
-                Message.Private(userId, "use of incorrect signs");
+                Message.SendPrivateMessage(userId, "use of incorrect signs");
                 return;
             }
 
             if (TooLongName(name))
             {
-                Message.Private(userId, "Name too long");
+                Message.SendPrivateMessage(userId, "Name too long");
                 return;
             }
 
             if (TooShortName(name))
             {
-                Message.Private(userId, "Name too short.");
+                Message.SendPrivateMessage(userId, "Name too short.");
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace Game.Api
 
             if (IsNameRegister(name, players, out _))
             {
-                Message.Private(userId, "name already taken");
+                Message.SendPrivateMessage(userId, "name already taken");
                 return;
             }
 

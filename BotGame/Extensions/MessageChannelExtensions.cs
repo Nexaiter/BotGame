@@ -1,10 +1,6 @@
 ﻿using Discord;
 using DiscordBot.Api.Embeds;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Api.Common;
 
 namespace DiscordBot.Api.Extensions
 {
@@ -13,15 +9,14 @@ namespace DiscordBot.Api.Extensions
         public static Task SendMessageToChannel(this IMessageChannel channel, string text)
         => channel.SendMessageAsync(text);
 
-        public static Task SendMessageWithEmbedToChannel(this IMessageChannel channel, string text)
+        public static Task SendMessageToChannel(this IMessageChannel channel, FullMessage fullMessage, bool isNormalMessage = false)
         {
-            var embed = EmbedService.GenerateEmbedMessage(text);
-            var component = new ComponentBuilder()
-            .WithButton("Adventurer Menu", "AdventurerList")
-            .Build();
-            return channel.SendMessageAsync(embed: embed,components: component);
-
-
+            if (isNormalMessage)
+            {
+                return channel.SendMessageToChannel(fullMessage.Description ?? fullMessage.Title ?? throw new ArgumentNullException(nameof(fullMessage),"If isNormalMessage is set to true, fullMessage must have Title or Description"));
+            }
+            var msg = EmbedService.GenerateEmbedAndComponentsMessage(fullMessage);
+            return channel.SendMessageAsync(embed: msg.Embed, components: msg.Component);
         }
     }
 }

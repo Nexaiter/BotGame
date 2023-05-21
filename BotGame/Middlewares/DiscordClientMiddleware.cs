@@ -3,8 +3,10 @@ using Discord.Addons.Hosting;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Api.Embeds;
+using DiscordBot.Api.Extensions;
 using DiscordBot.Api.GameCommands;
 using DiscordBot.Api.IoC;
+using Game.Api;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -34,10 +36,10 @@ namespace DiscordBot.Api.Middlewares
             //Client.MessageUpdated += MessageUpdatedEventHandler;
             _commandService.CommandExecuted += CommandExecutedEventHandler;
             Client.ButtonExecuted += EventButtonHandler;
+            Client.SelectMenuExecuted += SelectMenuHandler;
 
             return InjectDependencyToCommandModules();
         }
-
         private Task<IEnumerable<ModuleInfo>> InjectDependencyToCommandModules()
         => _commandService.AddModulesAsync(typeof(DiscordBotApiModule).Assembly, _provider);
 
@@ -85,31 +87,13 @@ namespace DiscordBot.Api.Middlewares
             //}
             return Task.CompletedTask;
         }
-        public async Task EventButtonHandler(SocketMessageComponent component)
+        private async Task EventButtonHandler(SocketMessageComponent component)
         {
-
-            switch (component.Data.CustomId)
-            {
-
-                case "AdventurerList":
-
-                    await AdventurerListButtonCommand(component);
-                    break;
-            }
+            GameManager.PlayWithButton(component.User.Id, component.Data.CustomId, component.UpdateMessage);
         }
-
-        public async Task AdventurerListButtonCommand(SocketMessageComponent component)
+        private async Task SelectMenuHandler(SocketMessageComponent component)
         {
-            var embed = component.Message.Embeds.First();
-
-            var builder = EmbedService.Clone(embed);
-
-            builder.Description = "after button";
-
-
-            await component.UpdateAsync(x => x.Embed = builder.Build());
-
-
+            GameManager.PlayWithSelectMenu(component.User.Id, component.Data.CustomId, component.UpdateMessage);
         }
     }
 }

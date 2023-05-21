@@ -1,10 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
-using DiscordBot.Api.Embeds;
-using Microsoft.Extensions.Configuration;
-using System.Runtime.CompilerServices;
+using Game.Api.Common;
+using System.ComponentModel;
 
 namespace DiscordBot.Api.Embeds
 {
@@ -26,49 +24,53 @@ namespace DiscordBot.Api.Embeds
                .WithDescription(message)
                .WithCurrentTimestamp()
                .AddField("Komenda wywołana przez:", $"{context.Message.Author.Mention} na kanale {((SocketTextChannel)context.Message.Channel).Mention}")
-
-               .Build();
-
-
-        }
-        public static Embed GenerateEmbedMessage(string message)
-        {
-            var embed = new EmbedBuilder();
-            return embed
-               .WithColor(_theme)
-               .WithDescription(message)
                .Build();
         }
-
-        public static EmbedBuilder Clone(Embed embed)
+        public static (Embed Embed, MessageComponent Component) GenerateEmbedAndComponentsMessage(FullMessage fullMessage)
         {
-            var embedBuilder = new EmbedBuilder();
-            return embedBuilder
-               //.WithAuthor(embed.Author!.Value.Name, embed.Author.Value.IconUrl, embed.Author.Value.Url)
-               //.WithFooter(embed.Footer.Value.Text, embed.Footer.Value.IconUrl)
-               .WithColor(embed.Color.Value.R, embed.Color.Value.G, embed.Color.Value.B)
-               //.WithTitle(embed.Title)
-               .WithDescription(embed.Description);
-               //.WithCurrentTimestamp()
-              // .WithFields(BuilderToEmbed(embed.Fields));
+            var componentBuilder = new ComponentBuilder();
+            if (fullMessage.Buttons is not null)
+            {
+                foreach (var (Label, Id) in fullMessage.Buttons)
+                {
+                    componentBuilder.WithButton(Label, Id);
+                }
+            }
 
-               
+            if (fullMessage.Menus is not null)
+            {
+                foreach (var (MenuId, PlaceHolder, options) in fullMessage.Menus)
+                {
+                    var selectMenuBuilder = new SelectMenuBuilder();
+                    selectMenuBuilder.WithCustomId(MenuId).WithPlaceholder(PlaceHolder);
+                    foreach (var (id, value) in options)
+                    {
+                        selectMenuBuilder.AddOption(id, value);
+                    }
+                    componentBuilder.WithSelectMenu(selectMenuBuilder);
+                }
+            }
+
+            var embedFieldsBuilder = new List<EmbedFieldBuilder>(fullMessage.Fields?.Count() ?? 0);
+            if (fullMessage.Fields is not null)
+            {
+                foreach (var field in fullMessage.Fields)
+                {
+                    embedFieldsBuilder.Add(new EmbedFieldBuilder().WithName(field));
+                }
+            }
+
+            var embedBuilder = new EmbedBuilder()
+            .WithColor(Color.DarkBlue)
+                .WithDescription(fullMessage?.Description ?? " ")
+                .WithTitle(fullMessage?.Title ?? " ")
+                .WithCurrentTimestamp();
+
+            if (embedFieldsBuilder.Count is not 0)
+            {
+                embedBuilder.WithFields(embedFieldsBuilder);
+            }
+            return (embedBuilder.Build(), componentBuilder.Build());
         }
-
-        //public static IEnumerable<EmbedFieldBuilder> BuilderToEmbed(IEnumerable<EmbedField> fields)
-        //{
-            
-        //    foreach (var field in fields)
-        //    {
-        //        var builder = new EmbedFieldBuilder();
-        //        builder.WithValue(field);
-        //        yield return builder;
-        //    }
-        //}
-
-
-
-
-
     }
 }
