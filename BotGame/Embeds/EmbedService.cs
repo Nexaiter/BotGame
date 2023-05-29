@@ -54,9 +54,9 @@ namespace DiscordBot.Api.Embeds
             var embedFieldsBuilder = new List<EmbedFieldBuilder>(fullMessage.Fields?.Count() ?? 0);
             if (fullMessage.Fields is not null)
             {
-                foreach (var field in fullMessage.Fields)
+                foreach (var (name,value) in fullMessage.Fields)
                 {
-                    embedFieldsBuilder.Add(new EmbedFieldBuilder().WithName(field));
+                    embedFieldsBuilder.Add(new EmbedFieldBuilder().WithValue(value).WithName(name).WithIsInline(true));
                 }
             }
 

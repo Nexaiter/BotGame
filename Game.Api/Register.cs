@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Concurrent;
 using Game.Api.Save;
+using Game.Api.Common;
 
 namespace Game.Api
 {
@@ -14,7 +15,7 @@ namespace Game.Api
         {
             if(!command.Contains("register "))
             {
-                Message.SendPrivateMessage(userId, "register using register playername command");
+                Message.SendPrivateMessage(userId, "Hello! Please register using 'register playername' command");
                 return;
             }
             string name = command.Replace("register ", "");
@@ -48,8 +49,11 @@ namespace Game.Api
             var playerProfile = new PlayerProfile(userId);
             players.TryAdd(userId, playerProfile);
             players[userId].ChangeName(name);
-            PlayerProfileSaving.Save(playerProfile); 
-        
+            PlayerProfiles.PlayerProfileToList(playerProfile);
+            PlayerProfileSaving.Save();
+            Message.SendPrivateEmbedMessage(userId, EmbedTemplates.AfterRegistrationEmbed);
+
+
         }
 
         public static bool IsPlayerRegister(ulong userId, ConcurrentDictionary<ulong, PlayerProfile> players)
@@ -74,7 +78,6 @@ namespace Game.Api
             character = default;
             return false;
         }
-
         private static bool NicknameValidator(string stringToCheck)
         {
             var wantedCharsPattern = new Regex("^[a-zA-Z żźćńółęąśŻŹĆĄŚĘŁÓŃ]+$");

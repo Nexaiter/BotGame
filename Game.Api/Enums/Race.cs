@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace Game.Api.Enums
 {
-    public enum Gender
+    public enum Race
     {
-        Male = 1,
-        Female = 2
+        Human = 1,
+        Pixies = 2,
+        Dwarf = 3,
+        Elf = 4
+
     }
 }

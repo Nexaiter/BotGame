@@ -1,4 +1,6 @@
-﻿using Game.Api.Players;
+﻿using Game.Api.Common;
+using Game.Api.Enums;
+using Game.Api.Players;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -17,13 +19,15 @@ namespace Game.Api
         {
             var players = GetInstance().Players;
 
+
             if (!Register.IsPlayerRegister(userId, players))
             {
                 Register.RegisterNewPlayer(userId, commandName, players);
                 return;
             }
 
-           // Commands.Init(players[userId], commandName, players);
+
+
 
         }
         public static async void BackgroundEventHandling()

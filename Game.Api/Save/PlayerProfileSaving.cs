@@ -12,9 +12,14 @@ namespace Game.Api.Save
     internal static class PlayerProfileSaving
     {
         private static readonly string Path = "Players/PlayerList.json";
-        public static void Save(PlayerProfile playerProfile)
+        public static void Save()
         {
-            string jsonString = JsonSerializer.Serialize(playerProfile);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            string jsonString = JsonSerializer.Serialize(PlayerProfiles.playerProfiles, options);
             File.WriteAllText(Path, jsonString);
             
         }

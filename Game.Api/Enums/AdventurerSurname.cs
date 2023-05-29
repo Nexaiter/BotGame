@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Game.Api.Enums
 {
-    public enum Gender
+    public enum AdventurerSurname
     {
-        Male = 1,
-        Female = 2
+        Cranel = 1, 
+        Crozzo = 2,
+        Loga = 3
     }
 }

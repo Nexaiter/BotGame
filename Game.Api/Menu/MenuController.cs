@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.Api.Enums
+namespace Game.Api.Menu
 {
-    public enum Gender
+    public static class MenuController
     {
-        Male = 1,
-        Female = 2
+        public static void ShowPlayerProfile()
+        {
+
+        }
     }
 }

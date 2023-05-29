@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game.Api
 {
-    public class Character
+    internal class EmbedGenerator
     {
     }
 }

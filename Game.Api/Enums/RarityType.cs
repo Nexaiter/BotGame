@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace Game.Api.Enums
 {
-    public enum Gender
+    public enum RarityType
     {
-        Male = 1,
-        Female = 2
+        Common = 1,
+        Uncommon = 2,
+        Rare = 3, 
+        SuperRare = 4,
+        UltraRare = 5
     }
 }
